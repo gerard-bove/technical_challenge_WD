@@ -1,5 +1,5 @@
 const PORT = process.env.PORT || 5005;
-
+const path = require("path")
 const data = require("./data/phones.json");
 const express = require("express");
 const router = express.Router();
@@ -13,9 +13,20 @@ app.get("/phones", (req, res, next) => {
 })
 
 app.get("/phones/:id", (req, res, next) => {
+  var options = {
+    root: path.join(__dirname, 'public'),
+    
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true
+    }
+  }
   const { id } = req.params;
-  console.log(data[id])
-  res.send(data[id])
+  res.sendFile(data[id].imageFileName, options, function (err) {
+    if (err) {
+      next(err)
+    }
+  })
 })
 
 app.listen(PORT, () => {
